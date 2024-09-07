@@ -1,0 +1,29 @@
+name: Scan for secrets
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Install TruffleHog
+        run: pip install trufflehog
+
+      - name: Run TruffleHog
+        run: trufflehog --json . > trufflehog_output.json
+
+      - name: Upload results
+        uses: actions/upload-artifact@v2
+        with:
+          name: trufflehog-results
+          path: trufflehog_output.json
